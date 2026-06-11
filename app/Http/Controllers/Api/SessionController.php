@@ -7,6 +7,15 @@ use App\Models\ClimbingSession;
 use Illuminate\Http\Request;
 
 class SessionController extends Controller {
+    public function index(Request $request) {
+        $sessions = ClimbingSession::orderBy('date')->get();
+
+        return response()->json([
+            'success' => true,
+            'sessions' => $sessions,
+        ]);
+    }
+
     public function store(Request $request) {
         $request->validate([
             'place'              => 'required|string|max:255',

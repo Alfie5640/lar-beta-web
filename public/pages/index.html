@@ -1,16 +1,6 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <script type="module">
-            import { requireAuth } from "/js/auth.js";
-
-            const user = await requireAuth();
-
-            if (user) {
-                document.getElementById('name').textContent = user.username;
-            }   
-        </script>
-
     </head>
     <body>
         <div id="name"></div>
@@ -21,6 +11,11 @@
             <li><a href="/pages/friends">Friends</a></li>
             <li><a href="/pages/profile">Profile</a></li>
         </ul>
-    </body>
 
+        <div id="sessionList">
+            
+        </div>
+
+    </body>
+    <script type="module" src="/js/home.js"></script>
 </html>
