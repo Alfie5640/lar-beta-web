@@ -1,6 +1,13 @@
 import { requireAuth } from "/js/auth.js";
-const user = await requireAuth();
 const token = localStorage.getItem("token");
+
+document.addEventListener("DOMContentLoaded", async (e) => {
+    const user = await requireAuth();
+
+    if (user) {
+        document.getElementById('name').textContent = user.username;
+    }   
+});
 
 document.getElementById('createSessionForm').addEventListener('submit', async (e) => {
     e.preventDefault();
