@@ -30,3 +30,21 @@ export async function requireAuth() {
         return null;
     }
 }
+
+export async function logout() {
+    const token = localStorage.getItem("token");
+
+    try {
+        await fetch("/api/logout", {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+    } catch (err) {
+        console.error("Logout error:", err);
+    }
+
+    localStorage.removeItem("token");
+    window.location.href = "/pages/login.html";
+}

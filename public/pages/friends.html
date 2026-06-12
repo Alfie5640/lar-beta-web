@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Friends</title>
+        <link rel="stylesheet" href="/css/global.css">
+        <link rel="stylesheet" href="/css/friends.css">
+    </head>
+    <body>
+        <div id="navbar"></div>
+
+        <div class="maincontent">
+            <h1>Friends</h1>
+
+            <section>
+                <h2>Find Users</h2>
+                <form id="searchForm">
+                    <input type="text" id="searchUsername" placeholder="Search by username:" required>
+                    <input type="submit" value="Search">
+                </form>
+                <div id="searchResults"></div>
+            </section>
+
+            <section>
+                <h2>Pending Requests</h2>
+                <div id="pendingRequests"></div>
+            </section>
+
+            <section>
+                <h2>Your Friends</h2>
+                <div id="friendsList"></div>
+            </section>
+        </div>
+
+        <script type="module" src="/js/friends.js"></script>
+        <script type="module" src="/js/navbar.js"></script>
+    </body>
+</html>

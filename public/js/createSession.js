@@ -1,4 +1,6 @@
 import { requireAuth } from "/js/auth.js";
+import { logout } from "/js/auth.js";
+
 const token = localStorage.getItem("token");
 
 document.addEventListener("DOMContentLoaded", async (e) => {
@@ -6,7 +8,9 @@ document.addEventListener("DOMContentLoaded", async (e) => {
 
     if (user) {
         document.getElementById('name').textContent = user.username;
-    }   
+    }
+
+    document.getElementById("logoutBtn").addEventListener("click", logout);
 });
 
 document.getElementById('createSessionForm').addEventListener('submit', async (e) => {
