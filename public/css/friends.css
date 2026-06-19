@@ -1,0 +1,21 @@
+.friendsDiv {
+    background-color: #f3efea;
+    padding: 10px;
+    margin: 10px;
+    height: 30%;
+    border-radius: 10px;
+    width: 75%;
+}
+
+.maincontent {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    height: 80%;
+}
+
+#pageTitle {
+    width: 75%;
+    text-align: left;
+    color: #f3efea;
+}

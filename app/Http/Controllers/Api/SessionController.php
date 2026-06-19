@@ -4,11 +4,29 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\ClimbingSession;
+use App\Models\Friendship;
 use Illuminate\Http\Request;
 
 class SessionController extends Controller {
     public function index(Request $request) {
-        $sessions = ClimbingSession::orderBy('date')->get();
+        $userId = $request->user()->id;
+
+        $friendships = Friendship::where('status', 'accepted')
+            ->where(function ($query) use ($userId) {
+                $query->where('user_id', $userId)
+                    ->orWhere('friend_id', $userId);
+            })
+            ->get();
+
+        $friendIds = $friendships->map(function ($friendship) use ($userId) {
+            return $friendship->user_id == $userId
+                ? $friendship->friend_id
+                : $friendship->user_id;
+        })->push($userId);
+
+        $sessions = ClimbingSession::whereIn('user_id', $friendIds)
+            ->orderBy('date')
+            ->get();
 
         return response()->json([
             'success' => true,
