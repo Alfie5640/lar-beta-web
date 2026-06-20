@@ -14,23 +14,19 @@ class FriendshipController extends Controller {
             'friend_id' => 'required|integer|exists:users,id|different:' . $request->user()->id,
         ]);
 
-        $existing = Friendship::where(function ($query) use ($request) {
-            $query->where('user_id', $request->user()->id)
-                ->where('friend_id', $request->friend_id);
-        })->orWhere(function ($query) use ($request) {
-            $query->where('user_id', $request->friend_id)
-                ->where('friend_id', $request->user()->id);
-        })->first();
+        $alreadyExists = $request->user()->sentFriendRequests()
+                ->where('friend_id', $request->friend_id)->exists()
+            || $request->user()->receivedFriendRequests()
+                ->where('user_id', $request->friend_id)->exists();
 
-        if ($existing) {
+        if ($alreadyExists) {
             return response()->json([
                 'success' => false,
                 'message' => 'A friendship or request already exists between these users.',
             ], 409);
         }
 
-        $friendship = Friendship::create([
-            'user_id'   => $request->user()->id,
+        $friendship = $request->user()->sentFriendRequests()->create([
             'friend_id' => $request->friend_id,
             'status'    => 'pending',
         ]);
@@ -47,10 +43,10 @@ class FriendshipController extends Controller {
             'status'        => 'required|in:accepted,rejected',
         ]);
 
-        $friendship = Friendship::find($request->friendship_id);
+        $friendship = $request->user()->receivedFriendRequests()
+            ->find($request->friendship_id);
 
-        // Only the recipient of the request can respond to it
-        if ($friendship->friend_id !== $request->user()->id) {
+        if (!$friendship) {
             return response()->json([
                 'success' => false,
                 'message' => 'You are not authorized to respond to this request.',
@@ -67,7 +63,7 @@ class FriendshipController extends Controller {
     }
 
     public function pendingRequests(Request $request) {
-        $requests = Friendship::where('friend_id', $request->user()->id)
+        $requests = $request->user()->receivedFriendRequests()
             ->where('status', 'pending')
             ->with('sender')
             ->get();
@@ -86,7 +82,14 @@ class FriendshipController extends Controller {
                 $query->where('user_id', $userId)
                     ->orWhere('friend_id', $userId);
             })
-            ->get();
+            ->with(['sender', 'recipient'])
+            ->get()
+            ->map(function ($friendship) use ($userId) {
+                $friendship->friend = $friendship->user_id === $userId
+                    ? $friendship->recipient
+                    : $friendship->sender;
+                return $friendship;
+            });
 
         return response()->json([
             'success' => true,
@@ -111,14 +114,8 @@ class FriendshipController extends Controller {
     }
 
     public function removeFriend(Request $request, $id) {
-        $userId = $request->user()->id;
-
-        $friendship = Friendship::where('id', $id)
-            ->where(function ($query) use ($userId) {
-                $query->where('user_id', $userId)
-                    ->orWhere('friend_id', $userId);
-            })
-            ->first();
+        $friendship = $request->user()->sentFriendRequests()->find($id)
+            ?? $request->user()->receivedFriendRequests()->find($id);
 
         if (!$friendship) {
             return response()->json([

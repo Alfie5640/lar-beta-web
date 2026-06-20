@@ -11,4 +11,8 @@ class Friendship extends Model {
     public function sender() {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function recipient() {
+        return $this->belongsTo(User::class, 'friend_id');
+    }
 }

@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", async (e) => {
     document.getElementById("logoutBtn").addEventListener("click", logout);
 });
 
-// --- Search for users ---
+// Search for users 
 document.getElementById("searchForm").addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -51,7 +51,7 @@ document.getElementById("searchForm").addEventListener("submit", async (e) => {
     }
 });
 
-// --- Send a friend request ---
+//Send a friend request
 async function sendFriendRequest(friendId) {
     try {
         const response = await fetch("/api/friends/request", {
@@ -76,7 +76,7 @@ async function sendFriendRequest(friendId) {
     }
 }
 
-// --- Load pending requests ---
+//Load pending requests
 async function loadPendingRequests() {
     const pendingDiv = document.getElementById("pendingRequests");
     pendingDiv.innerHTML = "";
@@ -117,7 +117,7 @@ async function loadPendingRequests() {
     }
 }
 
-// --- Respond to a friend request ---
+//Respond to a friend request
 async function respondToRequest(friendshipId, status) {
     try {
         const response = await fetch("/api/friends/respond", {
@@ -143,7 +143,7 @@ async function respondToRequest(friendshipId, status) {
     }
 }
 
-// --- Load friends list ---
+//Load friends list
 async function loadFriends() {
     const friendsDiv = document.getElementById("friendsList");
     friendsDiv.innerHTML = "";
@@ -167,7 +167,7 @@ async function loadFriends() {
             data.friends.forEach(f => {
                 const div = document.createElement("div");
                 div.innerHTML = `
-                    <span>Friendship #${f.id}</span>
+                    <span>${f.friend.username}</span>
                     <button data-id="${f.id}" class="removeBtn">Remove</button>
                 `;
                 friendsDiv.appendChild(div);
@@ -183,7 +183,7 @@ async function loadFriends() {
     }
 }
 
-// --- Remove a friend ---
+//Remove a friend
 async function removeFriend(friendshipId) {
     try {
         const response = await fetch(`/api/friends/${friendshipId}`, {
@@ -204,6 +204,6 @@ async function removeFriend(friendshipId) {
     }
 }
 
-// --- Initial load ---
+//Initial load 
 loadPendingRequests();
 loadFriends();

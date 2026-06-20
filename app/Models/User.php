@@ -30,4 +30,33 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function climbingSessions() {
+        return $this->hasMany(ClimbingSession::class);
+    }
+
+    public function sentFriendRequests() {
+        return $this->hasMany(Friendship::class, 'user_id');
+    }
+
+    public function receivedFriendRequests() {
+        return $this->hasMany(Friendship::class, 'friend_id');
+    }
+
+    public function friends() {
+        $friendships = Friendship::where('status', 'accepted')
+            ->where(function ($query) {
+                $query->where('user_id', $this->id)
+                    ->orWhere('friend_id', $this->id);
+            })
+            ->get();
+
+        $friendIds = $friendships->map(function ($friendship) {
+            return $friendship->user_id == $this->id
+                ? $friendship->friend_id
+                : $friendship->user_id;
+        });
+
+        return User::whereIn('id', $friendIds)->get();
+    }
 }
