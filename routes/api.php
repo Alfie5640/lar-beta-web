@@ -23,4 +23,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/profile/bio', [ProfileController::class, 'updateBio']);
     Route::post('/profile/picture', [ProfileController::class, 'uploadProfilePicture']);
     Route::patch('/profile/username', [ProfileController::class, 'updateUsername']);
+    Route::patch('/profile/password', [ProfileController::class, 'updatePassword']);
 });

@@ -5,8 +5,33 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Hash;
 
 class ProfileController extends Controller {
+
+    public function updatePassword(Request $request) {
+        $request->validate([
+            'current_password' => 'required|string',
+            'password'         => 'required|string|min:8|confirmed',
+        ]);
+
+        $user = $request->user();
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Current password is incorrect.',
+            ], 403);
+        }
+
+        $user->password = $request->password;
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Password updated.',
+        ]);
+    }
 
     public function updateUsername(Request $request) {
         $request->validate([

@@ -18,6 +18,38 @@ document.addEventListener("DOMContentLoaded", async (e) => {
     document.getElementById("logoutBtn").addEventListener("click", logout);
 });
 
+// Update password
+document.getElementById("changePasswordForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const current_password = document.getElementById("currentPassword").value;
+    const password = document.getElementById("newPassword").value;
+    const password_confirmation = document.getElementById("newPasswordConfirm").value;
+
+    try {
+        const response = await fetch("/api/profile/password", {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ current_password, password, password_confirmation })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            alert("Password updated!");
+            document.getElementById("changePasswordForm").reset();
+        } else {
+            alert(data.message ?? "Password update failed.");
+        }
+
+    } catch (err) {
+        console.error("Password update error:", err);
+    }
+});
+
 // Update bio
 document.getElementById("bioForm").addEventListener("submit", async (e) => {
     e.preventDefault();
