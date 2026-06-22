@@ -12,14 +12,45 @@ class SessionController extends Controller {
         $friendIds = $request->user()->friends()->pluck('id')->push($request->user()->id);
 
         $sessions = ClimbingSession::whereIn('user_id', $friendIds)
-        ->with('user:id,username,profile_picture')
-        ->orderBy('date')
-        ->get();
+            ->with([
+                'user:id,username,profile_picture',
+                'attendees:id,username,profile_picture',
+            ])
+            ->orderBy('date')
+            ->get()
+            ->map(function ($session) use ($request) {
+                $session->is_attending = $session->attendees
+                    ->contains('id', $request->user()->id);
+                return $session;
+            });
 
         return response()->json([
-            'success' => true,
+            'success'  => true,
             'sessions' => $sessions,
         ]);
+    }
+
+    public function join(Request $request, $id) {
+        $session = ClimbingSession::findOrFail($id);
+
+        // you cant join your own session
+        if ($session->user_id === $request->user()->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You are the host of this session',
+            ], 403);
+        }
+
+        $session->attendees()->syncWithoutDetaching([$request->user()->id]);
+
+        return response()->json(['success' => true]);
+    }
+
+    public function leave(Request $request, $id) {
+        $session = ClimbingSession::findOrFail($id);
+        $session->attendees()->detach($request->user()->id);
+
+        return response()->json(['success' => true]);
     }
 
     public function store(Request $request){

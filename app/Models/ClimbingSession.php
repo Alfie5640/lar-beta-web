@@ -11,4 +11,13 @@ class ClimbingSession extends Model {
     public function user() {
         return $this->belongsTo(User::class);
     }
+
+    public function attendees() {
+        return $this->belongsToMany(
+            User::class,
+            'session_attendees',
+            'session_id', 
+            'user_id' 
+        )->withTimestamps();
+    }
 }
