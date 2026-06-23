@@ -7,8 +7,25 @@
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 14px;
     padding: 1.75rem 1.5rem;
+    align-items: start;
 }
 
+/* -----------------------------
+   SECTION HEADERS
+----------------------------- */
+#sessionList h2 {
+    grid-column: 1 / -1;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 12px 0 4px;
+    color: #ffffff;
+    border-left: 4px solid #f15025;
+    padding-left: 10px;
+}
+
+/* -----------------------------
+   SESSION CARDS
+----------------------------- */
 #sessionList > div {
     background: #242424;
     border: 1px solid rgba(206, 208, 206, 0.15);
@@ -21,13 +38,9 @@
     border-color: rgba(206, 208, 206, 0.35);
 }
 
-#sessionList h2 {
-    font-size: 14px;
-    font-weight: 600;
-    color: #FFFFFF;
-    margin: 0;
-}
-
+/* -----------------------------
+   TEXT INSIDE CARDS
+----------------------------- */
 #sessionList h3 {
     font-size: 16px;
     font-weight: 600;
@@ -41,6 +54,9 @@
     margin: 2px 0;
 }
 
+/* -----------------------------
+   BUTTON
+----------------------------- */
 .joinBtn {
     margin-top: 12px;
     padding: 6px 16px;

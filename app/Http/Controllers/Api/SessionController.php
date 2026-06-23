@@ -12,6 +12,7 @@ class SessionController extends Controller {
         $friendIds = $request->user()->friends()->pluck('id')->push($request->user()->id);
 
         $sessions = ClimbingSession::whereIn('user_id', $friendIds)
+            ->whereDate('date', '>=', now())
             ->with([
                 'user:id,username,profile_picture',
                 'attendees:id,username,profile_picture',
