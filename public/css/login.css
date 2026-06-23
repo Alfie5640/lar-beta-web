@@ -1,138 +1,142 @@
-:root {
-    --primary: #163823;
-    --primary-dark: #536648;
-    --primary-light: #536648;
-
-    --background: rgb(243,239,234);
-    --surface: rgb(243,239,234);
-
-    --text: #111111;
-    --border: rgb(243,239,234);
-
-    --shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    --radius: 8px;
-    --radius-pill: 30px;
-}
-
-html,
-body {
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
+* {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: "Quicksand", sans-serif;
 }
 
 body {
-    background-color: var(--primary);
+    font-family: sans-serif;
+    background-color: #191919;
+    min-height: 100vh;
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
 }
 
 .maincontent {
-    width: 40%;
-    height: 90%;
-    background-color: var(--surface);
-    box-shadow: var(--shadow);
-    border-radius: var(--radius);
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
+    width: 100%;
+    max-width: 400px;
 }
+
+/* ── Tab header ── */
 
 .tab-header {
     position: relative;
-    display: flex;
-    justify-content: space-between;
-    background-color: var(--primary-light);
-    border-radius: var(--radius-pill);
-    width: 40%;
-    height: 70px;
-    align-self: center;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: #242424;
+    border: 1px solid rgba(206, 208, 206, 0.15);
+    border-radius: 10px 10px 0 0;
     overflow: hidden;
-}
-
-.tab {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: 600;
-    color: var(--primary);
-    cursor: pointer;
-    z-index: 2;
-    transition: color 0.3s ease;
-}
-
-.tab.active {
-    color: var(--surface);
 }
 
 .tab-indicator {
     position: absolute;
-    top: 0;
+    bottom: 0;
     left: 0;
     width: 50%;
-    height: 100%;
-    background-color: var(--primary);
-    border-radius: var(--radius-pill);
-    transition: transform 0.3s ease;
+    height: 2px;
+    background: #F15025;
+    transition: transform 0.2s ease;
     z-index: 1;
 }
 
+.tab {
+    padding: 0.85rem 1rem;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: #888;
+    cursor: pointer;
+    transition: color 0.15s;
+    user-select: none;
+}
+
+.tab.active {
+    color: #FFFFFF;
+}
+
+.tab:hover:not(.active) {
+    color: #CED0CE;
+}
+
+/* ── Form container ── */
+
 .form-container {
-    padding: 30px;
+    background: #242424;
+    border: 1px solid rgba(206, 208, 206, 0.15);
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    padding: 1.5rem;
 }
 
 .form {
     display: none;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .form.active {
-    display: block;
+    display: flex;
 }
 
-input[type="text"],
-input[type="password"],
-input[type="email"] {
-    width: 90%;
-    padding: 8px;
-    margin: 30px 0;
-    border: none;
-    background-color: var(--background);
-    border-bottom: 1px solid var(--primary-light);
-}
+/* ── Inputs ── */
 
-input[type="submit"] {
-    background-color: var(--primary);
-    color: var(--surface);
-    border: none;
-    border-radius: 20px;
-    padding: 10px 20px;
-    cursor: pointer;
-    transition: 0.3s;
-    width: 90%;
-    height: 60px;
-    margin-top: 20px;
-}
-
-input[type="submit"]:hover {
-    background-color: var(--primary-dark);
-}
-
-input[type="text"]:focus,
-input[type="password"]:focus,
-input[type="email"]:focus {
+.form input[type="text"],
+.form input[type="email"],
+.form input[type="password"] {
+    width: 100%;
+    background: #191919;
+    border: 1px solid rgba(206, 208, 206, 0.15);
+    border-radius: 8px;
+    padding: 0.65rem 0.9rem;
+    font-size: 14px;
+    font-family: inherit;
+    color: #E6E8E6;
     outline: none;
-    background-color: var(--background);
-    border-bottom: 2px solid var(--primary);
-    transition: border-color 0.2s ease;
+    transition: border-color 0.15s;
 }
 
-::placeholder {
-    color: var(--text);
+.form input[type="text"]::placeholder,
+.form input[type="email"]::placeholder,
+.form input[type="password"]::placeholder {
+    color: #888;
+}
+
+.form input[type="text"]:focus,
+.form input[type="email"]:focus,
+.form input[type="password"]:focus {
+    border-color: #F15025;
+}
+
+/* ── Submit ── */
+
+.form input[type="submit"] {
+    margin-top: 4px;
+    width: 100%;
+    background: #F15025;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    padding: 0.7rem 1rem;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.form input[type="submit"]:hover {
+    background: #c93e18;
+}
+
+/* ── Error ── */
+
+#error {
+    margin-top: 12px;
+    font-size: 13px;
+    color: #e57373;
+    text-align: center;
+    min-height: 1rem;
 }

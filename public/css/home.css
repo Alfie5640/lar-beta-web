@@ -1,3 +1,72 @@
 * {
     color: white;
 }
+
+#sessionList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+    padding: 1.75rem 1.5rem;
+}
+
+#sessionList > div {
+    background: #242424;
+    border: 1px solid rgba(206, 208, 206, 0.15);
+    border-radius: 12px;
+    padding: 1rem 1.1rem;
+    transition: border-color 0.15s;
+}
+
+#sessionList > div:hover {
+    border-color: rgba(206, 208, 206, 0.35);
+}
+
+#sessionList h2 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #FFFFFF;
+    margin: 0;
+}
+
+#sessionList h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #FFFFFF;
+    margin: 8px 0 6px;
+}
+
+#sessionList p {
+    font-size: 13px;
+    color: #CED0CE;
+    margin: 2px 0;
+}
+
+.joinBtn {
+    margin-top: 12px;
+    padding: 6px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    background: #F15025;
+    color: #FFFFFF;
+    font-family: inherit;
+    transition: background 0.15s;
+}
+
+.joinBtn:hover {
+    background: #c93e18;
+}
+
+.joinBtn[data-attending="true"] {
+    background: transparent;
+    border: 1px solid rgba(206, 208, 206, 0.3);
+    color: #CED0CE;
+}
+
+.joinBtn[data-attending="true"]:hover {
+    border-color: #c0392b;
+    color: #e57373;
+    background: rgba(192, 57, 43, 0.1);
+}

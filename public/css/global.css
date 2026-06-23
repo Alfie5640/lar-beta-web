@@ -11,7 +11,7 @@ body {
     padding: 0;
     font-family: sans-serif;
     height: 100%;
-    background-color: #163823;
+    background-color: #191919;
 }
 
 #profilePic {
@@ -20,7 +20,7 @@ body {
     border: 2px solid white;
     border-radius: 50%;
     flex-shrink: 0;
-    overflow: hidden;          
+    overflow: hidden;
     background: rgba(255, 255, 255, 0.05);
 }
 
@@ -32,7 +32,7 @@ body {
 }
 
 .main-nav {
-    background: #163823;
+    background: #111111;
     color: white;
 
     display: flex;
@@ -40,14 +40,14 @@ body {
     align-items: center;
 
     padding: 0 1rem;
-    border-bottom: 1px solid #536648;
+    border-bottom: 1px solid rgba(206, 208, 206, 0.2);
     height: 75px;
 }
 
 .main-nav #name {
     font-weight: 600;
     font-size: 1rem;
-    color: #f3efea;
+    color: #E6E8E6;
     padding: 0 1rem;
 }
 
@@ -62,7 +62,7 @@ body {
 
 .main-nav a {
     display: block;
-    color: white;
+    color: #CED0CE;
     text-decoration: none;
     padding: 0.75rem 1rem;
     border-radius: 8px;
@@ -70,20 +70,21 @@ body {
 }
 
 .main-nav a:hover {
-    background-color: #536648;
+    background-color: #2e2e2e;
+    color: #E6E8E6;
 }
 
 .main-nav li:has(> a[aria-current="page"]) a,
 .main-nav a.active {
-    background-color: #f3efea;
-    color: #163823;
+    background-color: #F15025;
+    color: #FFFFFF;
     font-weight: 600;
 }
 
 .main-nav button#logoutBtn {
     background: transparent;
-    color: #f3efea;
-    border: 1px solid #536648;
+    color: #E6E8E6;
+    border: 1px solid rgba(206, 208, 206, 0.3);
     border-radius: 8px;
     padding: 0.6rem 1rem;
     font-size: 0.9rem;
@@ -96,6 +97,82 @@ body {
     background-color: #c0392b;
     border-color: #c0392b;
     color: white;
+}
+
+@media (min-width: 769px) {
+    .main-nav {
+        position: sticky;
+        top: 0;
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .main-nav ul {
+        gap: 0.5rem;
+    }
+
+    body {
+        padding-top: 0;
+    }
+
+    .nav-icon {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: auto;
+        padding: 0;
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    .main-nav #name {
+        display: none;
+    }
+
+    .main-nav ul {
+        width: 100%;
+        height: 60px;
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        gap: 0;
+        padding: 0 0.25rem;
+    }
+
+    .main-nav ul li {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+    }
+
+    .main-nav a,
+    .main-nav button#logoutBtn {
+        padding: 0.5rem;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .nav-label {
+        display: none;
+    }
+
+    .nav-icon {
+        display: block;
+        font-size: 22px;
+    }
+
+    body {
+        padding-bottom: 70px;
+    }
 }
 
 @media (min-width: 769px) {

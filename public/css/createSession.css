@@ -1,0 +1,119 @@
+.maincontent {
+    max-width: 520px;
+    margin: 2.5rem auto;
+    padding: 0 1.25rem;
+}
+
+.maincontent h1 {
+    font-size: 22px;
+    font-weight: 600;
+    color: #FFFFFF;
+    margin-bottom: 1.75rem;
+}
+
+#createSessionForm {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+#createSessionForm input[type="text"],
+#createSessionForm input[type="date"],
+#createSessionForm input[type="time"],
+#createSessionForm textarea {
+    width: 100%;
+    background: #242424;
+    border: 1px solid rgba(206, 208, 206, 0.15);
+    border-radius: 8px;
+    padding: 0.65rem 0.9rem;
+    font-size: 14px;
+    font-family: inherit;
+    color: #E6E8E6;
+    outline: none;
+    transition: border-color 0.15s;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+#createSessionForm input[type="text"]::placeholder,
+#createSessionForm input[type="date"]::placeholder,
+#createSessionForm input[type="time"]::placeholder,
+#createSessionForm textarea::placeholder {
+    color: #888;
+}
+
+#createSessionForm input[type="text"]:focus,
+#createSessionForm input[type="date"]:focus,
+#createSessionForm input[type="time"]:focus,
+#createSessionForm textarea:focus {
+    border-color: #F15025;
+}
+
+#createSessionForm input[type="date"],
+#createSessionForm input[type="time"] {
+    color-scheme: dark;
+}
+
+#createSessionForm textarea {
+    resize: vertical;
+    min-height: 100px;
+    line-height: 1.5;
+}
+
+.checkboxes {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 0.75rem 0.9rem;
+    background: #242424;
+    border: 1px solid rgba(206, 208, 206, 0.15);
+    border-radius: 8px;
+}
+
+.checkboxes label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: #CED0CE;
+    cursor: pointer;
+}
+
+.checkboxes input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #F15025;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+#createSessionForm input[type="submit"] {
+    background: #F15025;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    padding: 0.7rem 1rem;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.15s;
+    margin-top: 4px;
+}
+
+#createSessionForm input[type="submit"]:hover {
+    background: #c93e18;
+}
+
+#error {
+    margin-top: 1rem;
+    font-size: 13px;
+    color: #e57373;
+    min-height: 1rem;
+}
+
+@media (max-width: 768px) {
+    .maincontent {
+        margin: 1.5rem auto;
+    }
+}

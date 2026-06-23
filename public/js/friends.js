@@ -13,7 +13,21 @@ document.addEventListener("DOMContentLoaded", async (e) => {
     document.getElementById("logoutBtn").addEventListener("click", logout);
 });
 
-// Search for users 
+function makeRow(avatarSrc, username, buttonsHTML) {
+    return `
+        <div class="user-row">
+            <img
+                class="user-avatar"
+                src="${avatarSrc || '/images/default-avatar.png'}"
+                alt="${username}"
+            >
+            <span class="user-name">${username}</span>
+            ${buttonsHTML}
+        </div>
+    `;
+}
+
+// Search for users
 document.getElementById("searchForm").addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -24,21 +38,25 @@ document.getElementById("searchForm").addEventListener("submit", async (e) => {
     try {
         const response = await fetch(`/api/friends/search?username=${encodeURIComponent(username)}`, {
             method: "GET",
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }
+            headers: { "Authorization": `Bearer ${token}` }
         });
 
         const data = await response.json();
 
         if (data.success) {
+            if (data.users.length === 0) {
+                resultsDiv.innerHTML = `<p class="empty-state">No users found.</p>`;
+                return;
+            }
+
             data.users.forEach(u => {
                 const div = document.createElement("div");
-                div.innerHTML = `
-                    <span>${u.username}</span>
-                    <button data-id="${u.id}" class="addFriendBtn">Add Friend</button>
-                `;
-                resultsDiv.appendChild(div);
+                div.innerHTML = makeRow(
+                    u.profile_picture ? `/storage/${u.profile_picture}` : null,
+                    u.username,
+                    `<button data-id="${u.id}" class="row-btn primary addFriendBtn">Add Friend</button>`
+                );
+                resultsDiv.appendChild(div.firstElementChild);
             });
 
             document.querySelectorAll(".addFriendBtn").forEach(btn => {
@@ -51,7 +69,7 @@ document.getElementById("searchForm").addEventListener("submit", async (e) => {
     }
 });
 
-//Send a friend request
+// Send a friend request
 async function sendFriendRequest(friendId) {
     try {
         const response = await fetch("/api/friends/request", {
@@ -76,7 +94,7 @@ async function sendFriendRequest(friendId) {
     }
 }
 
-//Load pending requests
+// Load pending requests
 async function loadPendingRequests() {
     const pendingDiv = document.getElementById("pendingRequests");
     pendingDiv.innerHTML = "";
@@ -84,27 +102,28 @@ async function loadPendingRequests() {
     try {
         const response = await fetch("/api/friends/pending", {
             method: "GET",
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }
+            headers: { "Authorization": `Bearer ${token}` }
         });
 
         const data = await response.json();
 
         if (data.success) {
             if (data.requests.length === 0) {
-                pendingDiv.innerHTML = "<p>No pending requests.</p>";
+                pendingDiv.innerHTML = `<p class="empty-state">No pending requests.</p>`;
                 return;
             }
 
             data.requests.forEach(req => {
                 const div = document.createElement("div");
-                div.innerHTML = `
-                    <span>${req.sender.username}</span>
-                    <button data-id="${req.id}" data-status="accepted" class="respondBtn">Accept</button>
-                    <button data-id="${req.id}" data-status="rejected" class="respondBtn">Reject</button>
-                `;
-                pendingDiv.appendChild(div);
+                div.innerHTML = makeRow(
+                    req.sender.profile_picture ? `/storage/${req.sender.profile_picture}` : null,
+                    req.sender.username,
+                    `
+                        <button data-id="${req.id}" data-status="accepted" class="row-btn accept respondBtn">Accept</button>
+                        <button data-id="${req.id}" data-status="rejected" class="row-btn ghost respondBtn">Decline</button>
+                    `
+                );
+                pendingDiv.appendChild(div.firstElementChild);
             });
 
             document.querySelectorAll(".respondBtn").forEach(btn => {
@@ -117,7 +136,7 @@ async function loadPendingRequests() {
     }
 }
 
-//Respond to a friend request
+// Respond to a friend request
 async function respondToRequest(friendshipId, status) {
     try {
         const response = await fetch("/api/friends/respond", {
@@ -143,7 +162,7 @@ async function respondToRequest(friendshipId, status) {
     }
 }
 
-//Load friends list
+// Load friends list
 async function loadFriends() {
     const friendsDiv = document.getElementById("friendsList");
     friendsDiv.innerHTML = "";
@@ -151,26 +170,25 @@ async function loadFriends() {
     try {
         const response = await fetch("/api/friends", {
             method: "GET",
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }
+            headers: { "Authorization": `Bearer ${token}` }
         });
 
         const data = await response.json();
 
         if (data.success) {
             if (data.friends.length === 0) {
-                friendsDiv.innerHTML = "<p>No friends yet.</p>";
+                friendsDiv.innerHTML = `<p class="empty-state">No friends yet.</p>`;
                 return;
             }
 
             data.friends.forEach(f => {
                 const div = document.createElement("div");
-                div.innerHTML = `
-                    <span>${f.friend.username}</span>
-                    <button data-id="${f.id}" class="removeBtn">Remove</button>
-                `;
-                friendsDiv.appendChild(div);
+                div.innerHTML = makeRow(
+                    f.friend.profile_picture ? `/storage/${f.friend.profile_picture}` : null,
+                    f.friend.username,
+                    `<button data-id="${f.id}" class="row-btn ghost removeBtn">Remove</button>`
+                );
+                friendsDiv.appendChild(div.firstElementChild);
             });
 
             document.querySelectorAll(".removeBtn").forEach(btn => {
@@ -183,14 +201,12 @@ async function loadFriends() {
     }
 }
 
-//Remove a friend
+// Remove a friend
 async function removeFriend(friendshipId) {
     try {
         const response = await fetch(`/api/friends/${friendshipId}`, {
             method: "DELETE",
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }
+            headers: { "Authorization": `Bearer ${token}` }
         });
 
         const data = await response.json();
@@ -204,6 +220,6 @@ async function removeFriend(friendshipId) {
     }
 }
 
-//Initial load 
+// Initial load
 loadPendingRequests();
 loadFriends();
