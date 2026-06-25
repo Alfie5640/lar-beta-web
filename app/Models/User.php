@@ -43,6 +43,11 @@ class User extends Authenticatable
         return $this->hasMany(Friendship::class, 'friend_id');
     }
 
+    public function attendingSessions() {
+        return $this->belongsToMany(ClimbingSession::class, 'session_attendees')
+            ->withTimestamps();
+    }
+
     public function friends() {
         $friendships = Friendship::where('status', 'accepted')
             ->where(function ($query) {

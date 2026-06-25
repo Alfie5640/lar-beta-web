@@ -1,8 +1,6 @@
 import { requireAuth } from "/js/auth.js";
 import { logout } from "/js/auth.js";
 
-const token = localStorage.getItem("token");
-
 document.addEventListener("DOMContentLoaded", async () => {
     const user = await requireAuth();
 
@@ -17,10 +15,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     try {
         const result = await fetch("/api/sessions", {
             method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
+            headers: {"Content-Type": "application/json"},
+            credentials: "include"
         });
 
         const data = await result.json();
@@ -84,32 +80,36 @@ document.addEventListener("DOMContentLoaded", async () => {
                 `).join('');
 
                 div.innerHTML = `
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        <img
-                            src="${session.user.profile_picture ? `/storage/${session.user.profile_picture}` : '/images/default-avatar.png'}"
-                            alt="${session.user.username}"
-                            style="width:32px; height:32px; border-radius:50%; object-fit:cover;"
-                        >
-                        <h2>${session.user.username}</h2>
-                    </div>
-
-                    <h3>${session.place}</h3>
-                    <p>${session.date}</p>
-                    <p>${session.time_start} - ${session.time_end ?? "Unknown"}</p>
-
-                    <div style="display:flex; align-items:center; gap:4px; margin-top:8px;">
-                        ${attendeeAvatars}
-                    </div>
-
-                    <button 
-                        class="joinBtn"
-                        data-id="${session.id}"
-                        data-attending="${session.is_attending}"
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <img
+                        src="${session.user.profile_picture ? `/storage/${session.user.profile_picture}` : '/images/default-avatar.png'}"
+                        alt="${session.user.username}"
+                        style="width:32px; height:32px; border-radius:50%; object-fit:cover;"
                     >
-                        ${session.is_attending ? "Leave" : "Join"}
-                    </button>
-                `;
+                    <h2>${session.user.username}</h2>
+                </div>
 
+                <h3>${session.place}</h3>
+                <p>${session.date}</p>
+                <p>${session.time_start} - ${session.time_end ?? "Unknown"}</p>
+
+                ${session.needs_tr_belayer ? `<span class="need-tag tr">Top Rope Belayer Needed</span>` : ''}
+                ${session.needs_lead_belayer ? `<span class="need-tag lead">Lead Belayer Needed</span>` : ''}
+                ${session.other_need ? `<span class="need-tag other">${session.other_need}</span>` : ''}
+                ${session.notes ? `<p>${session.notes}</p>` : ''}
+
+                <div style="display:flex; align-items:center; gap:4px; margin-top:8px;">
+                    ${attendeeAvatars}
+                </div>
+
+                <button 
+                    class="joinBtn"
+                    data-id="${session.id}"
+                    data-attending="${session.is_attending}"
+                >
+                    ${session.is_attending ? "Leave" : "Join"}
+                </button>
+            `;
                 resultDiv.appendChild(div);
             });
         }
@@ -131,13 +131,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             const sessionId = btn.dataset.id;
             const isAttending = btn.dataset.attending === "true";
 
-            const response = await fetch(
-                `/api/sessions/${sessionId}/${isAttending ? "leave" : "join"}`,
-                {
+            const response = await fetch(`/api/sessions/${sessionId}/${isAttending ? "leave" : "join"}`, {
                     method: isAttending ? "DELETE" : "POST",
-                    headers: {
-                        "Authorization": `Bearer ${token}`
-                    }
+                    headers: {},
+                    credentials: "include"
                 }
             );
 

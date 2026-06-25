@@ -1,18 +1,9 @@
 export async function requireAuth() {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-        window.location.href = "/pages/login.html";
-        return null;
-    }
-
     try {
         const response = await fetch("/api/user", {
             method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            }
+            headers: { "Content-Type": "application/json" },
+            credentials: "include"   // cookie sent automatically here
         });
 
         const data = await response.json();
@@ -32,19 +23,14 @@ export async function requireAuth() {
 }
 
 export async function logout() {
-    const token = localStorage.getItem("token");
-
     try {
         await fetch("/api/logout", {
             method: "POST",
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }
+            credentials: "include"
         });
     } catch (err) {
         console.error("Logout error:", err);
     }
 
-    localStorage.removeItem("token");
     window.location.href = "/pages/login.html";
 }

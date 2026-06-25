@@ -86,3 +86,33 @@
     color: #e57373;
     background: rgba(192, 57, 43, 0.1);
 }
+
+/* -----------------------------
+   NEED TAGS
+----------------------------- */
+.need-tag {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin: 4px 4px 0 0;
+}
+
+.need-tag.tr {
+    background: rgba(52, 152, 219, 0.15);
+    border: 1px solid rgba(52, 152, 219, 0.4);
+    color: #5dade2;
+}
+
+.need-tag.lead {
+    background: rgba(241, 80, 37, 0.15);
+    border: 1px solid rgba(241, 80, 37, 0.4);
+    color: #f15025;
+}
+
+.need-tag.other {
+    background: rgba(206, 208, 206, 0.08);
+    border: 1px solid rgba(206, 208, 206, 0.2);
+    color: #CED0CE;
+}

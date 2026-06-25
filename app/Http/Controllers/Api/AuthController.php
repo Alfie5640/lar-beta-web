@@ -7,34 +7,35 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    public function register(Request $request)
-    {
+    public function register(Request $request) {
         $request->validate([
-            'username'     => 'required|string|max:255',
-            'email'    => 'required|string|email|unique:users',
-            'password' => 'required|string|min:8|confirmed',
+            'username'  => 'required|string|max:255',
+            'email'     => 'required|string|email|unique:users',
+            'password'  => 'required|string|min:8|confirmed',
         ]);
 
         $user = User::create([
-            'username'     => $request->username,
+            'username' => $request->username,
             'email'    => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        Auth::login($user);
 
         return response()->json([
             'success' => true,
-            'token'   => $token,
-            'user'    => $user,
+            'user' => [
+                'id'       => $user->id,
+                'username' => $user->username,
+            ],
         ], 201);
     }
 
-    public function login(Request $request)
-    {
+    public function login(Request $request) {
         $request->validate([
             'username' => 'required|string',
             'password' => 'required|string',
@@ -48,12 +49,14 @@ class AuthController extends Controller
             ]);
         }
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        Auth::login($user);
 
         return response()->json([
             'success' => true,
-            'token'   => $token,
-            'user'    => $user,
+            'user' => [
+                'id'       => $user->id,
+                'username' => $user->username,
+            ],
         ]);
     }
 

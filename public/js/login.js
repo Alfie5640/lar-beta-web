@@ -3,27 +3,28 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 
     const username = document.getElementById("loginUsername").value;
     const password = document.getElementById("loginPassword").value;
+    const resultDiv = document.getElementById("error");
 
     try {
+        await fetch("/sanctum/csrf-cookie", { credentials: "include" });
+
         const response = await fetch("/api/login", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-
-            body: JSON.stringify({
-                username: username,
-                password: password,
-            })
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ username, password })
         });
+
+        if (response.status === 429) {
+            resultDiv.textContent = "Too many attempts. Please wait a minute.";
+            resultDiv.style.color = "red";
+            return;
+        }
 
         const data = await response.json();
 
-        const resultDiv = document.getElementById("error");
-        if (data.success && data.token) {
-            localStorage.setItem('token', data.token);
-            window.location.href="/pages/index.html";
-
+        if (data.success) {
+            window.location.href = "/pages/index.html";
         } else {
             resultDiv.textContent = data.message;
             resultDiv.style.color = "red";
@@ -31,42 +32,47 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 
     } catch (err) {
         console.error("Fetch error:", err);
-        document.getElementById("error").textContent = "Error contacting server.";
+        resultDiv.textContent = "Error contacting server.";
     }
 });
 
 document.getElementById('registerForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const username = document.getElementById("regUsername").value;
-    const password = document.getElementById("regPassword").value;
+    const resultDiv = document.getElementById("error");
 
     try {
+        await fetch("/sanctum/csrf-cookie", { credentials: "include" });
+
         const response = await fetch("/api/register", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
             body: JSON.stringify({
-                username: username,
+                username: document.getElementById("regUsername").value,
                 email: document.getElementById("regEmail").value,
-                password: password,
+                password: document.getElementById("regPassword").value,
                 password_confirmation: document.getElementById("regPasswordConfirm").value,
             })
         });
 
+        if (response.status === 429) {
+            resultDiv.textContent = "Too many attempts. Please wait a minute.";
+            resultDiv.style.color = "red";
+            return;
+        }
+
         const data = await response.json();
 
-        const resultDiv = document.getElementById("error");
-
-        if (data.success && data.token) {
-            localStorage.setItem('token', data.token);
+        if (data.success) {
             window.location.href = "/pages/index.html";
+        } else {
+            resultDiv.textContent = data.message || "Registration failed.";
+            resultDiv.style.color = "red";
         }
 
     } catch (err) {
         console.error("Fetch error:", err);
-        document.getElementById("error").textContent = "Error contacting server.";
+        resultDiv.textContent = "Error contacting server.";
     }
 });

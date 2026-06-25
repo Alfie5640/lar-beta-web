@@ -1,14 +1,20 @@
 import { requireAuth } from "/js/auth.js";
+import { logout } from "/js/auth.js";
 
 const token = localStorage.getItem("token");
 const params = new URLSearchParams(window.location.search);
 const userId = params.get("id");
 
 document.addEventListener("DOMContentLoaded", async () => {
-    await requireAuth();
+    const user = await requireAuth();
+
+    if (user) {
+        document.getElementById("name").textContent = user.username;
+    }
+
+    document.getElementById("logoutBtn").addEventListener("click", logout);
 
     if (!userId) {
-        // No id in URL, redirect or show error
         document.querySelector(".maincontent").textContent = "User not found.";
         return;
     }

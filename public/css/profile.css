@@ -135,9 +135,22 @@
     transition: background 0.15s;
 }
 
+#bioText {
+    color: white;
+}
+
 #bio button:hover,
 #settings button:hover {
     background: #c93e18;
+}
+
+/* ── Error state ── */
+.maincontent:not(:has(*)) ,
+.maincontent.error {
+    text-align: center;
+    color: #CED0CE;
+    font-size: 14px;
+    margin-top: 4rem;
 }
 
 @media (max-width: 768px) {
