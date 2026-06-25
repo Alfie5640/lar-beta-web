@@ -73,12 +73,14 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const div = document.createElement("div");
 
                 const attendeeAvatars = session.attendees.map(a => `
-                    <img
-                        src="${a.profile_picture ? `/storage/${a.profile_picture}` : '/images/default-avatar.png'}"
-                        alt="${a.username}"
-                        title="${a.username}"
-                        style="width:28px; height:28px; border-radius:50%; object-fit:cover; margin-right:4px;"
-                    >
+                    <a href="/pages/user.html?id=${a.id}">
+                        <img
+                            src="${a.profile_picture ? `/storage/${a.profile_picture}` : '/images/default-avatar.png'}"
+                            alt="${a.username}"
+                            title="${a.username}"
+                            style="width:28px; height:28px; border-radius:50%; object-fit:cover; margin-right:4px;"
+                        >
+                    </a>
                 `).join('');
 
                 div.innerHTML = `

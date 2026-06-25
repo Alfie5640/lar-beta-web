@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\SessionController;
 use App\Http\Controllers\Api\FriendshipController;
 use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\UserController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -26,4 +27,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/profile/password', [ProfileController::class, 'updatePassword']);
     Route::post('/sessions/{id}/join', [SessionController::class, 'join']);
     Route::delete('/sessions/{id}/leave', [SessionController::class, 'leave']);
+    Route::get('/users/{id}', [UserController::class, 'show']);
 });
