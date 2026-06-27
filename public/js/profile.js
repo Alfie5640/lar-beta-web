@@ -1,8 +1,6 @@
 import { requireAuth } from "/js/auth.js";
 import { logout } from "/js/auth.js";
 
-const token = localStorage.getItem("token");
-
 document.addEventListener("DOMContentLoaded", async (e) => {
     const user = await requireAuth();
 
@@ -29,10 +27,8 @@ document.getElementById("changePasswordForm").addEventListener("submit", async (
     try {
         const response = await fetch("/api/profile/password", {
             method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
             body: JSON.stringify({ current_password, password, password_confirmation })
         });
 
@@ -59,10 +55,8 @@ document.getElementById("bioForm").addEventListener("submit", async (e) => {
     try {
         const response = await fetch("/api/profile/bio", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
             body: JSON.stringify({ bio })
         });
 
@@ -96,11 +90,7 @@ document.getElementById("pictureForm").addEventListener("submit", async (e) => {
     try {
         const response = await fetch("/api/profile/picture", {
             method: "POST",
-            headers: {
-                "Authorization": `Bearer ${token}`
-                // No Content-Type here — the browser sets it automatically
-                // with the correct multipart boundary for FormData
-            },
+            credentials: "include",
             body: formData
         });
 
@@ -126,10 +116,8 @@ document.getElementById("changeUserForm").addEventListener("submit", async (e) =
     try {
         const response = await fetch("/api/profile/username", {
             method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
             body: JSON.stringify({ username })
         });
 

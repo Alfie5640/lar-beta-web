@@ -1,9 +1,13 @@
 import { requireAuth } from "/js/auth.js";
 import { logout } from "/js/auth.js";
 
-const token = localStorage.getItem("token");
 const params = new URLSearchParams(window.location.search);
 const userId = params.get("id");
+
+// sanity check
+if (userId && !/^\d+$/.test(userId)) {
+    document.querySelector(".maincontent").textContent = "User not found.";
+}
 
 document.addEventListener("DOMContentLoaded", async () => {
     const user = await requireAuth();
@@ -21,7 +25,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
         const response = await fetch(`/api/users/${userId}`, {
-            headers: { "Authorization": `Bearer ${token}` }
+            credentials: "include"
         });
 
         const data = await response.json();

@@ -1,4 +1,8 @@
 const navbar = document.getElementById("navbar");
 
 const response = await fetch("/components/nav.html");
-navbar.innerHTML = await response.text();
+const html = await response.text();
+
+if (response.url.startsWith(window.location.origin)) {
+    navbar.innerHTML = html;
+}

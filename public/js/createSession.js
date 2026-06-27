@@ -1,8 +1,6 @@
 import { requireAuth } from "/js/auth.js";
 import { logout } from "/js/auth.js";
 
-const token = localStorage.getItem("token");
-
 document.addEventListener("DOMContentLoaded", async (e) => {
     const user = await requireAuth();
 
@@ -28,11 +26,8 @@ document.getElementById('createSessionForm').addEventListener('submit', async (e
     try {
         const response = await fetch("/api/sessions", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
             body: JSON.stringify({
                 place: location,
                 date: date,
@@ -49,7 +44,7 @@ document.getElementById('createSessionForm').addEventListener('submit', async (e
         const resultDiv = document.getElementById("error");
 
         if (data.success) {
-            window.location.href="/pages/index.html";
+            window.location.href = "/pages/index.html";
         } else {
             resultDiv.textContent = data.message;
             resultDiv.style.color = "red";
@@ -58,5 +53,4 @@ document.getElementById('createSessionForm').addEventListener('submit', async (e
     } catch (err) {
         console.error("Fetch error:", err);
     }
-
 });

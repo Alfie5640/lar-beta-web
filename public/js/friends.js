@@ -1,7 +1,16 @@
 import { requireAuth } from "/js/auth.js";
 import { logout } from "/js/auth.js";
 
-const token = localStorage.getItem("token");
+// xss preventoion
+function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
 
 document.addEventListener("DOMContentLoaded", async (e) => {
     const user = await requireAuth();
@@ -18,10 +27,10 @@ function makeRow(avatarSrc, username, buttonsHTML) {
         <div class="user-row">
             <img
                 class="user-avatar"
-                src="${avatarSrc || '/images/default-avatar.png'}"
-                alt="${username}"
+                src="${escapeHtml(avatarSrc || '/images/default-avatar.png')}"
+                alt="${escapeHtml(username)}"
             >
-            <span class="user-name">${username}</span>
+            <span class="user-name">${escapeHtml(username)}</span>
             ${buttonsHTML}
         </div>
     `;
@@ -38,7 +47,7 @@ document.getElementById("searchForm").addEventListener("submit", async (e) => {
     try {
         const response = await fetch(`/api/friends/search?username=${encodeURIComponent(username)}`, {
             method: "GET",
-            headers: { "Authorization": `Bearer ${token}` }
+            credentials: "include"
         });
 
         const data = await response.json();
@@ -54,7 +63,7 @@ document.getElementById("searchForm").addEventListener("submit", async (e) => {
                 div.innerHTML = makeRow(
                     u.profile_picture ? `/storage/${u.profile_picture}` : null,
                     u.username,
-                    `<button data-id="${u.id}" class="row-btn primary addFriendBtn">Add Friend</button>`
+                    `<button data-id="${escapeHtml(String(u.id))}" class="row-btn primary addFriendBtn">Add Friend</button>`
                 );
                 resultsDiv.appendChild(div.firstElementChild);
             });
@@ -74,10 +83,8 @@ async function sendFriendRequest(friendId) {
     try {
         const response = await fetch("/api/friends/request", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
             body: JSON.stringify({ friend_id: friendId })
         });
 
@@ -102,7 +109,7 @@ async function loadPendingRequests() {
     try {
         const response = await fetch("/api/friends/pending", {
             method: "GET",
-            headers: { "Authorization": `Bearer ${token}` }
+            credentials: "include"
         });
 
         const data = await response.json();
@@ -119,8 +126,8 @@ async function loadPendingRequests() {
                     req.sender.profile_picture ? `/storage/${req.sender.profile_picture}` : null,
                     req.sender.username,
                     `
-                        <button data-id="${req.id}" data-status="accepted" class="row-btn accept respondBtn">Accept</button>
-                        <button data-id="${req.id}" data-status="rejected" class="row-btn ghost respondBtn">Decline</button>
+                        <button data-id="${escapeHtml(String(req.id))}" data-status="accepted" class="row-btn accept respondBtn">Accept</button>
+                        <button data-id="${escapeHtml(String(req.id))}" data-status="rejected" class="row-btn ghost respondBtn">Decline</button>
                     `
                 );
                 pendingDiv.appendChild(div.firstElementChild);
@@ -141,10 +148,8 @@ async function respondToRequest(friendshipId, status) {
     try {
         const response = await fetch("/api/friends/respond", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
             body: JSON.stringify({ friendship_id: friendshipId, status: status })
         });
 
@@ -170,7 +175,7 @@ async function loadFriends() {
     try {
         const response = await fetch("/api/friends", {
             method: "GET",
-            headers: { "Authorization": `Bearer ${token}` }
+            credentials: "include"
         });
 
         const data = await response.json();
@@ -186,7 +191,7 @@ async function loadFriends() {
                 div.innerHTML = makeRow(
                     f.friend.profile_picture ? `/storage/${f.friend.profile_picture}` : null,
                     f.friend.username,
-                    `<button data-id="${f.id}" class="row-btn ghost removeBtn">Remove</button>`
+                    `<button data-id="${escapeHtml(String(f.id))}" class="row-btn ghost removeBtn">Remove</button>`
                 );
                 friendsDiv.appendChild(div.firstElementChild);
             });
@@ -206,7 +211,7 @@ async function removeFriend(friendshipId) {
     try {
         const response = await fetch(`/api/friends/${friendshipId}`, {
             method: "DELETE",
-            headers: { "Authorization": `Bearer ${token}` }
+            credentials: "include"
         });
 
         const data = await response.json();

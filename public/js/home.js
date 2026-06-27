@@ -1,6 +1,17 @@
 import { requireAuth } from "/js/auth.js";
 import { logout } from "/js/auth.js";
 
+// xss prevention
+function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
     const user = await requireAuth();
 
@@ -69,11 +80,11 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const div = document.createElement("div");
 
                 const attendeeAvatars = session.attendees.map(a => `
-                    <a href="/pages/user.html?id=${a.id}">
+                    <a href="/pages/user.html?id=${escapeHtml(String(a.id))}">
                         <img
-                            src="${a.profile_picture ? `/storage/${a.profile_picture}` : '/images/default-avatar.png'}"
-                            alt="${a.username}"
-                            title="${a.username}"
+                            src="${escapeHtml(a.profile_picture ? `/storage/${a.profile_picture}` : '/images/default-avatar.png')}"
+                            alt="${escapeHtml(a.username)}"
+                            title="${escapeHtml(a.username)}"
                             style="width:28px; height:28px; border-radius:50%; object-fit:cover; margin-right:4px;"
                         >
                     </a>
@@ -82,21 +93,21 @@ document.addEventListener("DOMContentLoaded", async () => {
                 div.innerHTML = `
                 <div style="display:flex; align-items:center; gap:8px;">
                     <img
-                        src="${session.user.profile_picture ? `/storage/${session.user.profile_picture}` : '/images/default-avatar.png'}"
-                        alt="${session.user.username}"
+                        src="${escapeHtml(session.user.profile_picture ? `/storage/${session.user.profile_picture}` : '/images/default-avatar.png')}"
+                        alt="${escapeHtml(session.user.username)}"
                         style="width:32px; height:32px; border-radius:50%; object-fit:cover;"
                     >
-                    <h2>${session.user.username}</h2>
+                    <h2>${escapeHtml(session.user.username)}</h2>
                 </div>
 
-                <h3>${session.place}</h3>
-                <p>${session.date}</p>
-                <p>${session.time_start} - ${session.time_end ?? "Unknown"}</p>
+                <h3>${escapeHtml(session.place)}</h3>
+                <p>${escapeHtml(session.date)}</p>
+                <p>${escapeHtml(session.time_start)} - ${escapeHtml(session.time_end ?? "Unknown")}</p>
 
                 ${session.needs_tr_belayer ? `<span class="need-tag tr">Top Rope Belayer Needed</span>` : ''}
                 ${session.needs_lead_belayer ? `<span class="need-tag lead">Lead Belayer Needed</span>` : ''}
-                ${session.other_need ? `<span class="need-tag other">${session.other_need}</span>` : ''}
-                ${session.notes ? `<p>${session.notes}</p>` : ''}
+                ${session.other_need ? `<span class="need-tag other">${escapeHtml(session.other_need)}</span>` : ''}
+                ${session.notes ? `<p>${escapeHtml(session.notes)}</p>` : ''}
 
                 <div style="display:flex; align-items:center; gap:4px; margin-top:8px;">
                     ${attendeeAvatars}
@@ -104,8 +115,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 <button 
                     class="joinBtn"
-                    data-id="${session.id}"
-                    data-attending="${session.is_attending}"
+                    data-id="${escapeHtml(String(session.id))}"
+                    data-attending="${session.is_attending ? 'true' : 'false'}"
                 >
                     ${session.is_attending ? "Leave" : "Join"}
                 </button>
@@ -132,11 +143,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             const isAttending = btn.dataset.attending === "true";
 
             const response = await fetch(`/api/sessions/${sessionId}/${isAttending ? "leave" : "join"}`, {
-                    method: isAttending ? "DELETE" : "POST",
-                    headers: {},
-                    credentials: "include"
-                }
-            );
+                method: isAttending ? "DELETE" : "POST",
+                credentials: "include"
+            });
 
             const resData = await response.json();
 

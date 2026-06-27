@@ -24,7 +24,7 @@ class ProfileController extends Controller {
             ], 403);
         }
 
-        $user->password = $request->password;
+        $user->password = Hash::make($request->password);
         $user->save();
 
         return response()->json([
