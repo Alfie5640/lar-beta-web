@@ -10,11 +10,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 #[Fillable(['username', 'email', 'password', 'bio', 'profile_picture'])]
 #[Hidden(['password', 'remember_token', 'email_verified_at', 'created_at', 'updated_at'])]
-class User extends Authenticatable
-{
+class User extends Authenticatable implements MustVerifyEmail {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, HasApiTokens;
 

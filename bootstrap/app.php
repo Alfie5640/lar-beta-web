@@ -16,9 +16,12 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->statefulApi();
         $middleware->trustProxies(at: '*');
         $middleware->redirectGuestsTo('/pages/login.html');
+        $middleware->redirectUsersTo('/pages/index.html');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*'),
         );
     })->create();
+
+

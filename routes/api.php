@@ -6,15 +6,72 @@ use App\Http\Controllers\Api\SessionController;
 use App\Http\Controllers\Api\FriendshipController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\UserController;
+use App\Models\User;
+use Illuminate\Http\Request;
+
+Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) {
+    $user = User::findOrFail($id);
+
+    if (!hash_equals((string) $hash, sha1($user->email))) {
+        return response()->json(['success' => false, 'message' => 'Invalid verification link.'], 403);
+    }
+
+    if ($user->hasVerifiedEmail()) {
+        return redirect('http://127.0.0.1:8001/pages/login.html?verified=already');
+    }
+
+    $user->markEmailAsVerified();
+
+    return redirect('http://127.0.0.1:8001/pages/login.html?verified=1');
+})->middleware('signed')->name('verification.verify');
+
+Route::post('/email/resend', function (Request $request) {
+    $request->validate(['email' => 'required|email']);
+
+    $user = User::where('email', $request->email)->first();
+
+    if (!$user) {
+        return response()->json(['success' => false, 'message' => 'User not found.'], 404);
+    }
+
+    if ($user->hasVerifiedEmail()) {
+        return response()->json(['success' => false, 'message' => 'Email already verified.']);
+    }
+
+    $user->sendEmailVerificationNotification();
+    return response()->json(['success' => true, 'message' => 'Verification email resent.']);
+})->middleware('throttle:3,1');
+
+Route::post('/email/resend-by-username', function (Request $request) {
+    $request->validate(['username' => 'required|string']);
+
+    $user = User::where('username', $request->username)->first();
+
+    if (!$user) {
+        return response()->json(['success' => false, 'message' => 'User not found.'], 404);
+    }
+
+    if ($user->hasVerifiedEmail()) {
+        return response()->json(['success' => false, 'message' => 'Email already verified.']);
+    }
+
+    $user->sendEmailVerificationNotification();
+    return response()->json(['success' => true, 'message' => 'Verification email sent — check your inbox.']);
+})->middleware('throttle:3,1');
 
 Route::middleware('throttle:5,1')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
 });
 
+// no verified check 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
+});
+
+// all protected features
+Route::middleware(['auth:sanctum', \App\Http\Middleware\EnsureEmailIsVerified::class])->group(function () {
     Route::post('/sessions', [SessionController::class, 'store']);
     Route::get('/sessions', [SessionController::class, 'index']);
     Route::get('/friends', [FriendshipController::class, 'retrieveFriends']);

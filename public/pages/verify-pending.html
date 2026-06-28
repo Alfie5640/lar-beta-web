@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify your email</title>
+    <link rel="stylesheet" href="/css/global.css">
+</head>
+<body>
+    <div class="maincontent">
+        <h1>Check your email</h1>
+        <p>We've sent a verification link to your email address. Click it to activate your account.</p>
+        <button id="resendBtn">Resend verification email</button>
+        <p id="message"></p>
+    </div>
+
+    <script>
+        const email = new URLSearchParams(window.location.search).get("email");
+
+        document.getElementById("resendBtn").addEventListener("click", async () => {
+            const res = await fetch("/api/email/resend", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email })
+            });
+            const data = await res.json();
+            document.getElementById("message").textContent = data.message;
+        });
+    </script>
+</body>
+</html>

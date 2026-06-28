@@ -24,10 +24,11 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        Auth::login($user);
+        $user->sendEmailVerificationNotification();
 
         return response()->json([
             'success' => true,
+            'message' => 'Registration successful. Please check your email to verify your account.',
             'user' => [
                 'id'       => $user->id,
                 'username' => $user->username,
@@ -47,6 +48,14 @@ class AuthController extends Controller
             throw ValidationException::withMessages([
                 'username' => ['The provided credentials are incorrect'],
             ]);
+        }
+
+        if (!$user->hasVerifiedEmail()) {
+            return response()->json([
+                'success'    => false,
+                'unverified' => true,
+                'message'    => 'Please verify your email before logging in.',
+            ], 403);
         }
 
         Auth::login($user);

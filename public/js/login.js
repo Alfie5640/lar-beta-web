@@ -25,9 +25,17 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 
         if (data.success) {
             window.location.href = "/pages/index.html";
-        } else {
-            resultDiv.textContent = data.message;
-            resultDiv.style.color = "red";
+        } else if (data.unverified) {
+            resultDiv.innerHTML = `Email not verified. <button id="resendBtn" style="margin-left:8px;">Resend email</button>`;
+            document.getElementById("resendBtn").addEventListener("click", async () => {
+                const res = await fetch("/api/email/resend-by-username", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username: document.getElementById("loginUsername").value })
+                });
+                const resData = await res.json();
+                resultDiv.textContent = resData.message;
+            });
         }
 
     } catch (err) {
@@ -65,7 +73,8 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
         const data = await response.json();
 
         if (data.success) {
-            window.location.href = "/pages/index.html";
+            const email = document.getElementById("regEmail").value;
+            window.location.href = `/pages/verify-pending.html?email=${encodeURIComponent(email)}`;
         } else {
             resultDiv.textContent = data.message || "Registration failed.";
             resultDiv.style.color = "red";
