@@ -6,6 +6,13 @@
         <title>Friends</title>
         <link rel="stylesheet" href="/css/global.css">
         <link rel="stylesheet" href="/css/friends.css">
+
+        <link rel="manifest" href="/manifest.json">
+        <meta name="theme-color" content="#F15025">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <meta name="apple-mobile-web-app-title" content="BetaBase">
+        <link rel="apple-touch-icon" href="/images/icons/icon-192x192.png">
     </head>
     <body>
         <div id="navbar"></div>
@@ -34,5 +41,11 @@
 
         <script type="module" src="/js/navbar.js"></script>
         <script type="module" src="/js/friends.js"></script>
+        <script>
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw.js')
+                    .catch(err => console.error('SW registration failed:', err));
+            }
+        </script>
     </body>
 </html>

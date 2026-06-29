@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\SessionController;
 use App\Http\Controllers\Api\FriendshipController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\PasswordResetController;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -17,12 +18,12 @@ Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) 
     }
 
     if ($user->hasVerifiedEmail()) {
-        return redirect('http://127.0.0.1:8001/pages/login.html?verified=already');
+        return redirect(config('app.url') . '/pages/login.html?verified=already');
     }
 
     $user->markEmailAsVerified();
+    return redirect(config('app.url') . '/pages/login.html?verified=1');
 
-    return redirect('http://127.0.0.1:8001/pages/login.html?verified=1');
 })->middleware('signed')->name('verification.verify');
 
 Route::post('/email/resend', function (Request $request) {
@@ -59,6 +60,11 @@ Route::post('/email/resend-by-username', function (Request $request) {
     return response()->json(['success' => true, 'message' => 'Verification email sent — check your inbox.']);
 })->middleware('throttle:3,1');
 
+Route::middleware('throttle:3,1')->group(function () {
+    Route::post('/forgot-password', [PasswordResetController::class, 'forgotPassword']);
+    Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);
+});
+
 Route::middleware('throttle:5,1')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
@@ -72,6 +78,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // all protected features
 Route::middleware(['auth:sanctum', \App\Http\Middleware\EnsureEmailIsVerified::class])->group(function () {
+    Route::middleware('throttle:10,1')->group(function () {
+        Route::patch('/profile/username', [ProfileController::class, 'updateUsername']);
+        Route::patch('/profile/password', [ProfileController::class, 'updatePassword']);
+    });
     Route::post('/sessions', [SessionController::class, 'store']);
     Route::get('/sessions', [SessionController::class, 'index']);
     Route::get('/friends', [FriendshipController::class, 'retrieveFriends']);
@@ -82,8 +92,6 @@ Route::middleware(['auth:sanctum', \App\Http\Middleware\EnsureEmailIsVerified::c
     Route::delete('/friends/{id}', [FriendshipController::class, 'removeFriend']);
     Route::post('/profile/bio', [ProfileController::class, 'updateBio']);
     Route::post('/profile/picture', [ProfileController::class, 'uploadProfilePicture']);
-    Route::patch('/profile/username', [ProfileController::class, 'updateUsername']);
-    Route::patch('/profile/password', [ProfileController::class, 'updatePassword']);
     Route::post('/sessions/{id}/join', [SessionController::class, 'join']);
     Route::delete('/sessions/{id}/leave', [SessionController::class, 'leave']);
     Route::get('/users/{id}', [UserController::class, 'show']);

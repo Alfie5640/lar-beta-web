@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verify your email</title>
     <link rel="stylesheet" href="/css/global.css">
+
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#F15025">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BetaBase">
+    <link rel="apple-touch-icon" href="/images/icons/icon-192x192.png">
 </head>
 <body>
     <div class="maincontent">
@@ -26,6 +33,12 @@
             const data = await res.json();
             document.getElementById("message").textContent = data.message;
         });
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .catch(err => console.error('SW registration failed:', err));
+        }
     </script>
 </body>
 </html>

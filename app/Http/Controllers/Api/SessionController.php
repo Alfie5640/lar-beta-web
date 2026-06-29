@@ -34,23 +34,40 @@ class SessionController extends Controller {
     public function join(Request $request, $id) {
         $session = ClimbingSession::findOrFail($id);
 
-        // you cant join your own session
-        if ($session->user_id === $request->user()->id) {
+        // must be friends with the host
+        $isFriend = $request->user()->friends()->contains('id', $session->user_id);
+        $isOwner = $session->user_id === $request->user()->id;
+
+        if ($isOwner) {
             return response()->json([
                 'success' => false,
                 'message' => 'You are the host of this session',
             ], 403);
         }
 
-        $session->attendees()->syncWithoutDetaching([$request->user()->id]);
+        if (!$isFriend) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You are not authorised to join this session',
+            ], 403);
+        }
 
+        $session->attendees()->syncWithoutDetaching([$request->user()->id]);
         return response()->json(['success' => true]);
     }
 
     public function leave(Request $request, $id) {
         $session = ClimbingSession::findOrFail($id);
-        $session->attendees()->detach($request->user()->id);
 
+        // Can only leave sessions you're attending
+        if (!$session->attendees()->where('user_id', $request->user()->id)->exists()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You are not attending this session',
+            ], 403);
+        }
+
+        $session->attendees()->detach($request->user()->id);
         return response()->json(['success' => true]);
     }
 

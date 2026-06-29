@@ -13,7 +13,7 @@ class AuthController extends Controller
 {
     public function register(Request $request) {
         $request->validate([
-            'username'  => 'required|string|max:255',
+            'username' => 'required|string|max:30|alpha_num|unique:users',
             'email'     => 'required|string|email|unique:users',
             'password'  => 'required|string|min:8|confirmed',
         ]);
@@ -80,8 +80,15 @@ class AuthController extends Controller
         ]);
     }
 
-    public function user(Request $request)
-    {
-        return response()->json($request->user());
+    public function user(Request $request) {
+        $user = $request->user();
+
+        return response()->json([
+            'id'              => $user->id,
+            'username'        => $user->username,
+            'email'           => $user->email,
+            'bio'             => $user->bio,
+            'profile_picture' => $user->profile_picture,
+        ]);
     }
 }

@@ -69,21 +69,39 @@ class ProfileController extends Controller {
             'profile_picture' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
+        $file = $request->file('profile_picture');
+
+        $imageInfo = @getimagesize($file->getRealPath());
+        if (!$imageInfo) {
+            return response()->json(['success' => false, 'message' => 'Invalid image file.'], 422);
+        }
+
+        $allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
+        if (!in_array($imageInfo['mime'], $allowedMimes)) {
+            return response()->json(['success' => false, 'message' => 'Invalid image type.'], 422);
+        }
+
+        $extension = match($imageInfo['mime']) {
+            'image/jpeg' => 'jpg',
+            'image/png'  => 'png',
+            'image/webp' => 'webp',
+        };
+        $filename = 'profile-pictures/' . bin2hex(random_bytes(16)) . '.' . $extension;
+
         $user = $request->user();
 
-        // Delete old picture if one exists
         if ($user->profile_picture) {
             Storage::disk('public')->delete($user->profile_picture);
         }
 
-        $path = $request->file('profile_picture')->store('profile-pictures', 'public');
+        Storage::disk('public')->put($filename, file_get_contents($file->getRealPath()));
 
-        $user->profile_picture = $path;
+        $user->profile_picture = $filename;
         $user->save();
 
         return response()->json([
-            'success' => true,
-            'profile_picture_url' => Storage::disk('public')->url($path),
+            'success'             => true,
+            'profile_picture_url' => Storage::disk('public')->url($filename),
         ]);
     }
 }

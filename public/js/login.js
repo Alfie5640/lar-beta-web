@@ -1,3 +1,9 @@
+const params = new URLSearchParams(window.location.search);
+if (params.get("verified") === "1") {
+    document.getElementById("error").textContent = "Email verified! You can now log in.";
+    document.getElementById("error").style.color = "green";
+}
+
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -36,6 +42,9 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
                 const resData = await res.json();
                 resultDiv.textContent = resData.message;
             });
+        } else {
+            resultDiv.textContent = data.message;
+            resultDiv.style.color = "red";
         }
 
     } catch (err) {

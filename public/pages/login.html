@@ -34,6 +34,13 @@
         });
 
     </script>
+
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#F15025">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BetaBase">
+    <link rel="apple-touch-icon" href="/images/icons/icon-192x192.png">
 </head>
 
 <body>
@@ -49,10 +56,9 @@
         <div class="form-container">
             <form id="loginForm" class="form active">
                 <input type="text" id="loginUsername" placeholder="Username:" required>
-
                 <input type="password" id="loginPassword" placeholder="Password:" required>
-
                 <input type="submit" value="Login">
+                <a href="/pages/forgot-password.html">Forgot password?</a>
             </form>
 
             <form id="registerForm" class="form">
@@ -74,6 +80,13 @@
     </div>
 
     <script src="/js/login.js"></script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .catch(err => console.error('SW registration failed:', err));
+        }
+    </script>
 </body>
 
 </html>
