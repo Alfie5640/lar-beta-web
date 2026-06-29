@@ -21,7 +21,7 @@ jobs:
           coverage: none
 
       - name: Install dependencies
-        run: composer install --prefer-dist --no-progress --no-dev
+        run: composer install --prefer-dist --no-progress
 
       - name: Copy environment file
         run: cp .env.example .env
