@@ -140,3 +140,9 @@ body {
     text-align: center;
     min-height: 1rem;
 }
+
+a {
+    color: white;
+    text-decoration: underline;
+    text-align: center;
+}
