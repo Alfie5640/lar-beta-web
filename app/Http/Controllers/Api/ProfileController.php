@@ -104,4 +104,37 @@ class ProfileController extends Controller {
             'profile_picture_url' => Storage::disk('public')->url($filename),
         ]);
     }
+
+    public function deleteAccount(Request $request) {
+        $request->validate([
+            'password' => 'required|string',
+        ]);
+
+        $user = $request->user();
+
+        if (!Hash::check($request->password, $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Incorrect password.',
+            ], 403);
+        }
+
+        // Delete profile pic
+        if ($user->profile_picture) {
+            Storage::disk('public')->delete($user->profile_picture);
+        }
+
+        // Delete the user
+        $user->tokens()->delete();
+        $user->delete();
+
+        Auth::guard('web')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Account deleted.',
+        ]);
+    }
 }

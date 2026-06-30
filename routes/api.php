@@ -81,6 +81,7 @@ Route::middleware(['auth:sanctum', \App\Http\Middleware\EnsureEmailIsVerified::c
     Route::middleware('throttle:10,1')->group(function () {
         Route::patch('/profile/username', [ProfileController::class, 'updateUsername']);
         Route::patch('/profile/password', [ProfileController::class, 'updatePassword']);
+        Route::delete('/profile', [ProfileController::class, 'deleteAccount']);
     });
     Route::post('/sessions', [SessionController::class, 'store']);
     Route::get('/sessions', [SessionController::class, 'index']);

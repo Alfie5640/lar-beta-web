@@ -135,3 +135,36 @@ document.getElementById("changeUserForm").addEventListener("submit", async (e) =
         console.error("Username update error:", err);
     }
 });
+
+// Delete account
+document.getElementById("deleteAccountBtn").addEventListener("click", async () => {
+    const confirmed = confirm("Are you sure? This will permanently delete your account and all your data. This cannot be undone.");
+
+    if (!confirmed) return;
+
+    const password = prompt("Enter your password to confirm:");
+
+    if (!password) return;
+
+    try {
+        const response = await fetch("/api/profile", {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ password })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            alert("Your account has been deleted.");
+            window.location.href = "/pages/login.html";
+        } else {
+            alert(data.message ?? "Failed to delete account.");
+        }
+
+    } catch (err) {
+        console.error("Delete account error:", err);
+        alert("Error contacting server.");
+    }
+});
